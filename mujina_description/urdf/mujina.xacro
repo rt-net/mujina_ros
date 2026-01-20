@@ -1,0 +1,591 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration>
+<!-- 以上、Eclipse のバグ対策：(存在しない build.xml のDTDが無いことを警告する問題の回避) -->
+
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <xacro:macro name="mujina" params="joint0_lower_limit
+            joint0_upper_limit
+            joint1_lower_limit
+            joint1_upper_limit
+            joint2_lower_limit
+            joint2_upper_limit
+            joint3_lower_limit
+            joint3_upper_limit
+            joint4_lower_limit
+            joint4_upper_limit
+            joint5_lower_limit
+            joint5_upper_limit
+            joint6_lower_limit
+            joint6_upper_limit
+            joint7_lower_limit
+            joint7_upper_limit
+            joint8_lower_limit
+            joint8_upper_limit
+            joint9_lower_limit
+            joint9_upper_limit
+            joint10_lower_limit
+            joint10_upper_limit
+            joint11_lower_limit
+            joint11_upper_limit
+            joints_effort_limit
+            joints2_effort_limit
+            joints_velocity_limit
+            joints2_velocity_limit
+            color
+            ">
+
+
+
+    <link name="Base">
+      <visual>
+        <geometry>
+          <mesh filename="${mesh_dir}/visual/MUJINA_Body.stl" scale="1.0 1.0 1.0" />
+        </geometry>
+
+        <material name="${color}"/>
+      </visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+
+      <collision>
+        <geometry>
+          <box size="0.325 0.183 0.1025" scale="1.0 1.0 1.0" />
+        </geometry>
+
+      </collision>
+
+      <inertial>
+        <mass value="4.726259"/>
+        <origin xyz="-11.002e-03 5.891e-03 -1.819e-03" rpy="0 0 0"/>
+        <inertia ixx="16272346.466e-09" ixy="-357015.571e-09" iyy="58198068.258e-09" ixz="1622583.719e-09" iyz="-133226.592e-09" izz="66713599.876e-09" />
+      </inertial>
+
+    </link>
+
+    <link name="FL_scapula">
+      <visual>
+        <geometry>
+          <mesh filename="${mesh_dir}/visual/MUJINA_FL_scapula.stl" scale="1.0 1.0 1.0" />
+        </geometry>
+
+        <material name="${color}"/>
+      </visual>
+
+      <collision>
+        <origin xyz="0.05325 0.0 0.0" rpy="1.57 0 0" />
+        <geometry>
+          <cylinder radius="0.03925" length="0.059" scale="1.0 1.0 1.0" />
+        </geometry>
+
+      </collision>
+
+      <inertial>
+        <mass value="0.482508"/>
+        <origin xyz="47.243e-03 -2.208e-03 0.399e-03" rpy="0 0 0"/>
+        <inertia ixx="307785.826e-09" ixy="5361.123e-09" iyy="556337.868e-09" ixz="-1263.999e-09" iyz="2009.917e-09" izz="423503.319e-09" />
+      </inertial>
+
+    </link>
+
+
+    <link name="FL_thigh">
+      <visual>
+        <geometry>
+          <mesh filename="${mesh_dir}/visual/MUJINA_FL_thigh.stl" scale="1.0 1.0 1.0" />
+        </geometry>
+
+        <material name="${color}"/>
+      </visual>
+
+
+      <inertial>
+        <mass value="0.990346"/>
+        <origin xyz="-12.014e-03 44.544e-03 -36.915e-03" rpy="0 0 0"/>
+        <inertia ixx="4661594.781e-09" ixy="248933.808e-09" iyy="5017964.228e-09" ixz="-822161.790e-09" iyz="723761.735e-09" izz="1378221.163e-09" />
+      </inertial>
+
+    </link>
+
+    <link name="FL_calf">
+      <visual>
+        <geometry>
+          <mesh filename="${mesh_dir}/visual/MUJINA_FL_calf.stl" scale="1.0 1.0 1.0" />
+        </geometry>
+
+        <material name="${color}"/>
+      </visual>
+
+      <collision>
+        <origin xyz="0.0 0.0 -0.09" rpy="0 0 0" />
+        <geometry>
+          <cylinder radius="0.011" length="0.16" scale="1.0 1.0 1.0" />
+        </geometry>
+
+      </collision>
+
+      <inertial>
+        <mass value="0.218764"/>
+        <origin xyz="2.163e-03 -0.000e-03 -69.636e-03" rpy="0 0 0"/>
+        <inertia ixx="1562571.579e-09" ixy="0.665e-09" iyy="1596047.303e-09" ixz="36924.557e-09" iyz="-10.859e-09" izz="56697.571e-09" />
+      </inertial>
+
+    </link>
+
+    <link name="FL_foot">
+      <visual>
+        <origin xyz="0.0 0.0 0.0" rpy="1.57 0 0" />
+        <geometry>
+          <cylinder radius="0.025" length="0.016" scale="1.0 1.0 1.0" />
+        </geometry>
+
+        <material name="${color}"/>
+      </visual>
+
+      <collision>
+        <origin xyz="0.0 0.0 0.0" rpy="1.57 0 0" />
+        <geometry>
+          <sphere radius="0.025" scale="1.0 1.0 1.0" />
+        </geometry>
+
+
+      </collision>
+
+      <inertial>
+        <mass value="0.035331"/>
+        <origin xyz="-0.169e-03 -0.000e-03 -0.170e-03" rpy="0 0 0"/>
+        <inertia ixx="5962.282e-09" ixy="-0.000e-09" iyy="10503.732e-09" ixz="64.631e-09" iyz="-0.001e-09" izz="5963.346e-09" />
+      </inertial>
+
+    </link>
+
+    <joint name="FL_collar_joint" type="revolute">
+      <axis xyz="1 0 0" />
+      <parent link="Base" />
+      <child link="FL_scapula" />
+      <origin xyz="0.15675 0.050 0.0" rpy="0 0 0"/>
+      <limit lower="${joint0_lower_limit}" upper="${joint0_upper_limit}" effort="${joints_effort_limit}" velocity="${joints_velocity_limit}" />
+
+    </joint>
+
+
+    <joint name="FL_hip_joint" type="revolute">
+      <axis xyz="0 1 0" />
+      <parent link="FL_scapula" />
+      <child link="FL_thigh" />
+      <origin xyz="0.05325 0.018 0" rpy="0 0 0"/>
+      <limit lower="${joint1_lower_limit}" upper="${joint1_upper_limit}" effort="${joints_effort_limit}" velocity="${joints_velocity_limit}" />
+
+    </joint>
+
+    <joint name="FL_knee_joint" type="revolute">
+      <axis xyz="0 1 0" />
+      <parent link="FL_thigh" />
+      <child link="FL_calf" />
+      <origin xyz="0.0 0.064 -0.20" rpy="0 0 0"/>
+      <limit lower="${joint2_lower_limit}" upper="${joint2_upper_limit}" effort="${joints2_effort_limit}" velocity="${joints2_velocity_limit}" />
+
+    </joint>
+
+    <joint name="FL_ankle_joint" type="fixed">
+      <axis xyz="0 1 0" />
+      <parent link="FL_calf" />
+      <child link="FL_foot" />
+      <origin xyz="0.0 0.0 -0.2" rpy="0 0 0"/>
+
+    </joint>
+
+    <link name="FR_scapula">
+      <visual>
+        <geometry>
+          <mesh filename="${mesh_dir}/visual/MUJINA_FR_scapula.stl" scale="1.0 1.0 1.0" />
+        </geometry>
+
+        <material name="${color}"/>
+      </visual>
+
+      <collision>
+        <origin xyz="0.05325 0.0 0.0" rpy="1.57 0 0" />
+        <geometry>
+          <cylinder radius="0.03925" length="0.059" scale="1.0 1.0 1.0" />
+        </geometry>
+
+      </collision>
+
+      <inertial>
+        <mass value="0.482508"/>
+        <origin xyz="47.243e-03 2.208e-03 0.399e-03" rpy="0 0 0"/>
+        <inertia ixx="307785.843e-09" ixy="-5361.143e-09" iyy="556337.857e-09" ixz="-1264.048e-09" iyz="-2009.929e-09" izz="423503.390e-09" />
+      </inertial>
+
+    </link>
+
+
+    <link name="FR_thigh">
+      <visual>
+        <geometry>
+          <mesh filename="${mesh_dir}/visual/MUJINA_FR_thigh.stl" scale="1.0 1.0 1.0" />
+        </geometry>
+
+        <material name="${color}"/>
+      </visual>
+
+      <inertial>
+        <mass value="0.990345"/>
+        <origin xyz="-12.106e-03 -44.357e-03 -36.699e-03" rpy="0 0 0"/>
+        <inertia ixx="4694859.758e-09" ixy="-250841.224e-09" iyy="5029493.466e-09" ixz="-825307.513e-09" iyz="-740022.169e-09" izz="1382914.151e-09" />
+      </inertial>
+
+    </link>
+
+    <link name="FR_calf">
+      <visual>
+        <geometry>
+          <mesh filename="${mesh_dir}/visual/MUJINA_FR_calf.stl" scale="1.0 1.0 1.0" />
+        </geometry>
+
+        <material name="${color}"/>
+      </visual>
+
+      <collision>
+        <origin xyz="0.0 0.0 -0.09" rpy="0 0 0" />
+        <geometry>
+          <cylinder radius="0.011" length="0.16" scale="1.0 1.0 1.0" />
+        </geometry>
+
+      </collision>
+
+      <inertial>
+        <mass value="0.218764"/>
+        <origin xyz="2.163e-03 -0.000e-03 -69.636e-03" rpy="0 0 0"/>
+        <inertia ixx="1562576.445e-09" ixy="0.712e-09" iyy="1596052.133e-09" ixz="36924.046e-09" iyz="-10.666e-09" izz="56697.535e-09" />
+      </inertial>
+
+    </link>
+
+    <link name="FR_foot">
+      <visual>
+        <origin xyz="0.0 0.0 0.0" rpy="1.57 0 0" />
+        <geometry>
+          <cylinder radius="0.025" length="0.016" scale="1.0 1.0 1.0" />
+        </geometry>
+
+        <material name="${color}"/>
+      </visual>
+
+      <collision>
+        <origin xyz="0.0 0.0 0.0" rpy="1.57 0 0" />
+        <geometry>
+          <sphere radius="0.025" scale="1.0 1.0 1.0" />
+        </geometry>
+
+
+      </collision>
+
+      <inertial>
+        <mass value="0.035331"/>
+        <origin xyz="-0.169e-03 -0.000e-03 -0.171e-03" rpy="0 0 0"/>
+        <inertia ixx="5962.037e-09" ixy="-0.000e-09" iyy="10503.732e-09" ixz="64.629e-09" iyz="-0.001e-09" izz="5963.591e-09" />
+      </inertial>
+
+    </link>
+
+    <joint name="FR_collar_joint" type="revolute">
+      <axis xyz="1 0 0" />
+      <parent link="Base" />
+      <child link="FR_scapula" />
+      <origin xyz="0.15675 -0.05 0" rpy="0 0 0"/>
+      <limit lower="${joint3_lower_limit}" upper="${joint3_upper_limit}" effort="${joints_effort_limit}" velocity="${joints_velocity_limit}" />
+    </joint>
+
+    <joint name="FR_hip_joint" type="revolute">
+      <axis xyz="0 1 0" />
+      <parent link="FR_scapula" />
+      <child link="FR_thigh" />
+      <origin xyz="0.05325 -0.018 0" rpy="0 0 0"/>
+      <limit lower="${joint4_lower_limit}" upper="${joint4_upper_limit}" effort="${joints_effort_limit}" velocity="${joints_velocity_limit}" />
+
+    </joint>
+
+    <joint name="FR_knee_joint" type="revolute">
+      <axis xyz="0 1 0" />
+      <parent link="FR_thigh" />
+      <child link="FR_calf" />
+      <origin xyz="0 -0.064 -0.2" rpy="0 0 0"/>
+      <limit lower="${joint5_lower_limit}" upper="${joint5_upper_limit}" effort="${joints2_effort_limit}" velocity="${joints2_velocity_limit}" />
+
+    </joint>
+
+    <joint name="FR_ankle_joint" type="fixed">
+      <axis xyz="0 1 0" />
+      <parent link="FR_calf" />
+      <child link="FR_foot" />
+      <origin xyz="0.0 0.0 -0.2" rpy="0 0 0"/>
+
+    </joint>
+
+    <link name="RL_scapula">
+      <visual>
+        <geometry>
+          <mesh filename="${mesh_dir}/visual/MUJINA_RL_scapula.stl" scale="1.0 1.0 1.0" />
+        </geometry>
+
+        <material name="${color}"/>
+      </visual>
+
+      <collision>
+        <origin xyz="-0.05325 0.0 0.0" rpy="1.57 0 0" />
+        <geometry>
+          <cylinder radius="0.03925" length="0.059" scale="1.0 1.0 1.0" />
+        </geometry>
+
+      </collision>
+
+      <inertial>
+        <mass value="0.493371"/>
+        <origin xyz="-37.187e-03 -1.781e-03 -0.391e-03" rpy="0 0 0"/>
+        <inertia ixx="313187.754e-09" ixy="1982.511e-09" iyy="571430.637e-09" ixz="-1112.922e-09" iyz="-2092.146e-09" izz="441255.182e-09" />
+      </inertial>
+
+    </link>
+
+
+    <link name="RL_thigh">
+      <visual>
+        <geometry>
+          <mesh filename="${mesh_dir}/visual/MUJINA_RL_thigh.stl" scale="1.0 1.0 1.0" />
+        </geometry>
+
+        <material name="${color}"/>
+      </visual>
+
+      <inertial>
+        <mass value="0.994692"/>
+        <origin xyz="-11.894e-03 45.143e-03 -36.371e-03" rpy="0 0 0"/>
+        <inertia ixx="4664397.796e-09" ixy="227313.805e-09" iyy="4982990.710e-09" ixz="-785251.461e-09" iyz="698376.014e-09" izz="1336498.277e-09" />
+      </inertial>
+
+    </link>
+
+    <link name="RL_calf">
+      <visual>
+        <geometry>
+          <mesh filename="${mesh_dir}/visual/MUJINA_RL_calf.stl" scale="1.0 1.0 1.0" />
+        </geometry>
+
+        <material name="${color}"/>
+      </visual>
+
+      <collision>
+        <origin xyz="0.0 0.0 -0.09" rpy="0 0 0" />
+        <geometry>
+          <cylinder radius="0.011" length="0.16" scale="1.0 1.0 1.0" />
+        </geometry>
+
+      </collision>
+
+      <inertial>
+        <mass value="0.218764"/>
+        <origin xyz="2.161e-03 -0.000e-03 -69.637e-03" rpy="0 0 0"/>
+        <inertia ixx="1562544.124e-09" ixy="0.416e-09" iyy="1596022.084e-09" ixz="36960.125e-09" iyz="-10.512e-09" izz="56699.806e-09" />
+      </inertial>
+
+    </link>
+
+    <link name="RL_foot">
+      <visual>
+        <origin xyz="0.0 0.0 0.0" rpy="1.57 0 0" />
+        <geometry>
+          <cylinder radius="0.025" length="0.016" scale="1.0 1.0 1.0" />
+        </geometry>
+
+        <material name="${color}"/>
+      </visual>
+
+      <collision>
+        <origin xyz="0.0 0.0 0.0" rpy="1.57 0 0" />
+        <geometry>
+          <sphere radius="0.025" scale="1.0 1.0 1.0" />
+        </geometry>
+
+
+      </collision>
+
+      <inertial>
+        <mass value="0.035331"/>
+        <origin xyz="-0.169e-03 -0.000e-03 -0.171e-03" rpy="0 0 0"/>
+        <inertia ixx="5962.037e-09" ixy="-0.000e-09" iyy="10503.732e-09" ixz="64.629e-09" iyz="-0.001e-09" izz="5963.591e-09" />
+      </inertial>
+
+    </link>
+
+    <joint name="RL_collar_joint" type="revolute">
+      <axis xyz="1 0 0" />
+      <parent link="Base" />
+      <child link="RL_scapula" />
+      <origin xyz="-0.15675 0.05 0" rpy="0 0 0"/>
+      <limit lower="${joint6_lower_limit}" upper="${joint6_upper_limit}" effort="${joints_effort_limit}" velocity="${joints_velocity_limit}" />
+    </joint>
+
+
+    <joint name="RL_hip_joint" type="revolute">
+      <axis xyz="0 1 0" />
+      <parent link="RL_scapula" />
+      <child link="RL_thigh" />
+      <origin xyz="-0.05325 0.018 0" rpy="0 0 0"/>
+      <limit lower="${joint7_lower_limit}" upper="${joint7_upper_limit}" effort="${joints_effort_limit}" velocity="${joints_velocity_limit}" />
+
+    </joint>
+
+    <joint name="RL_knee_joint" type="revolute">
+      <axis xyz="0 1 0" />
+      <parent link="RL_thigh" />
+      <child link="RL_calf" />
+      <origin xyz="0 0.064 -0.2" rpy="0 0 0"/>
+      <limit lower="${joint8_lower_limit}" upper="${joint8_upper_limit}" effort="${joints2_effort_limit}" velocity="${joints2_velocity_limit}" />
+
+    </joint>
+
+    <joint name="RL_ankle_joint" type="fixed">
+      <axis xyz="0 1 0" />
+      <parent link="RL_calf" />
+      <child link="RL_foot" />
+      <origin xyz="0.0 0.0 -0.2" rpy="0 0 0"/>
+
+    </joint>
+
+    <link name="RR_scapula">
+      <visual>
+        <geometry>
+          <mesh filename="${mesh_dir}/visual/MUJINA_RR_scapula.stl" scale="1.0 1.0 1.0" />
+        </geometry>
+
+        <material name="${color}"/>
+      </visual>
+
+      <collision>
+        <origin xyz="-0.05325 0.0 0.0" rpy="1.57 0 0" />
+        <geometry>
+          <cylinder radius="0.03925" length="0.059" scale="1.0 1.0 1.0" />
+        </geometry>
+
+      </collision>
+
+      <inertial>
+        <mass value="0.493371"/>
+        <origin xyz="-37.187e-03 -1.781e-03 -0.391e-03" rpy="0 0 0"/>
+        <inertia ixx="313187.754e-09" ixy="1982.511e-09" iyy="571430.637e-09" ixz="-1112.922e-09" iyz="-2092.146e-09" izz="441255.182e-09" />
+      </inertial>
+
+    </link>
+
+
+    <link name="RR_thigh">
+      <visual>
+        <geometry>
+          <mesh filename="${mesh_dir}/visual/MUJINA_RR_thigh.stl" scale="1.0 1.0 1.0" />
+        </geometry>
+
+        <material name="${color}"/>
+      </visual>
+
+      <inertial>
+        <mass value="0.994692"/>
+        <origin xyz="-11.820e-03 -45.143e-03 -36.210e-03" rpy="0 0 0"/>
+        <inertia ixx="4677767.059e-09" ixy="-226443.819e-09" iyy="4996347.113e-09" ixz="-790251.967e-09" iyz="-694677.075e-09" izz="1336485.677e-09" />
+      </inertial>
+
+    </link>
+
+    <link name="RR_calf">
+      <visual>
+        <geometry>
+          <mesh filename="${mesh_dir}/visual/MUJINA_RR_calf.stl" scale="1.0 1.0 1.0" />
+        </geometry>
+
+        <material name="${color}"/>
+      </visual>
+
+      <collision>
+        <origin xyz="0.0 0.0 -0.09" rpy="0 0 0" />
+        <geometry>
+          <cylinder radius="0.011" length="0.16" scale="1.0 1.0 1.0" />
+        </geometry>
+
+      </collision>
+
+      <inertial>
+        <mass value="0.218764"/>
+        <origin xyz="2.161e-03 -0.000e-03 -69.637e-03" rpy="0 0 0"/>
+        <inertia ixx="1562544.124e-09" ixy="0.416e-09" iyy="1596022.084e-09" ixz="36960.125e-09" iyz="-10.512e-09" izz="56699.806e-09" />
+      </inertial>
+
+    </link>
+
+    <link name="RR_foot">
+      <visual>
+        <origin xyz="0.0 0.0 0.0" rpy="1.57 0 0" />
+        <geometry>
+          <cylinder radius="0.025" length="0.016" scale="1.0 1.0 1.0" />
+        </geometry>
+
+        <material name="${color}"/>
+      </visual>
+
+      <collision>
+        <origin xyz="0.0 0.0 0.0" rpy="1.57 0 0" />
+        <geometry>
+          <sphere radius="0.025" scale="1.0 1.0 1.0" />
+        </geometry>
+
+
+      </collision>
+
+      <inertial>
+        <mass value="0.035331"/>
+        <origin xyz="-0.169e-03 -0.000e-03 -0.171e-03" rpy="0 0 0"/>
+        <inertia ixx="5962.037e-09" ixy="-0.000e-09" iyy="10503.732e-09" ixz="64.629e-09" iyz="-0.001e-09" izz="5963.591e-09" />
+      </inertial>
+    </link>
+
+    <joint name="RR_collar_joint" type="revolute">
+      <axis xyz="1 0 0" />
+      <parent link="Base" />
+      <child link="RR_scapula" />
+      <origin xyz="-0.15675 -0.05 0" rpy="0 0 0"/>
+      <limit lower="${joint9_lower_limit}" upper="${joint9_upper_limit}" effort="${joints_effort_limit}" velocity="${joints_velocity_limit}" />
+    </joint>
+
+
+    <joint name="RR_hip_joint" type="revolute">
+      <axis xyz="0 1 0" />
+      <parent link="RR_scapula" />
+      <child link="RR_thigh" />
+      <origin xyz="-0.05325 -0.018 0" rpy="0 0 0"/>
+      <limit lower="${joint10_lower_limit}" upper="${joint10_upper_limit}" effort="${joints_effort_limit}" velocity="${joints_velocity_limit}" />
+
+    </joint>
+
+    <joint name="RR_knee_joint" type="revolute">
+      <axis xyz="0 1 0" />
+      <parent link="RR_thigh" />
+      <child link="RR_calf" />
+      <origin xyz="0 -0.064 -0.2" rpy="0 0 0"/>
+      <limit lower="${joint11_lower_limit}" upper="${joint11_upper_limit}" effort="${joints2_effort_limit}" velocity="${joints2_velocity_limit}" />
+
+    </joint>
+
+    <joint name="RR_ankle_joint" type="fixed">
+      <axis xyz="0 1 0" />
+      <parent link="RR_calf" />
+      <child link="RR_foot" />
+      <origin xyz="0.0 0.0 -0.2" rpy="0 0 0"/>
+
+    </joint>
+
+
+
+
+  </xacro:macro>
+
+
+</robot>

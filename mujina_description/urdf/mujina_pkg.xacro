@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration>
+<!-- 以上、Eclipse のバグ対策：(存在しない build.xml のDTDが無いことを警告する問題の回避) -->
+
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+  <xacro:property name="robot_name" value="mujina" />
+  <xacro:property name="urdf_dir" value="$(find ${robot_name}_description)/urdf"/>
+  <xacro:property name="mesh_dir" value="package://${robot_name}_description/meshes"/>
+  <!-- for Linux -->
+  <!-- <xacro:property name="urdf_dir" value="."/>
+  <xacro:property name="mesh_dir" value="../meshes"/>  -->
+  <!-- for Windows -->
+  <!-- 閲覧するOSにより上記切り替える -->
+</robot>

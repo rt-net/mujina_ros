@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration>
+<!-- 以上、Eclipse のバグ対策：(存在しない build.xml のDTDが無いことを警告する問題の回避) -->
+
+<robot name="mujina" xmlns:xacro="http://ros.org/wiki/xacro">
+
+<xacro:include filename="./mujina_pkg.xacro"/>
+  <!-- for Windows -->
+  <!-- <xacro:include filename="$(find template_description)/urdf/template_pkg.xacro"/> -->
+  <!-- for Linux -->
+  <!-- 閲覧するOSにより上記切り替える -->
+
+
+  <xacro:include filename="${urdf_dir}/mujina.xacro"/>
+
+	<material name="white">
+		<color rgba="0.9 0.9 0.9 1.0" />
+	</material>
+	<material name="blue">
+		<color rgba="0.0703125 0.0 0.8984375 1" />
+	</material>
+	<material name="green">
+		<color rgba="0.1 0.9 0.1 1" />
+	</material>
+
+	<!-- 必要ならば色追加してください -->
+
+	<xacro:property name="EFFORT_LIMIT" value="12.0" />
+	<xacro:property name="KNEES_EFFORT_LIMIT" value="24.0" />
+	<xacro:property name="VELOCITY_LIMIT" value="37.699" />
+	<xacro:property name="KNEES_VELOCITY_LIMIT" value="18.850" />
+	<!-- 一応Foodlyのパラメーター（XM540,XM430)置いてます -->
+
+	<xacro:mujina
+		joint0_lower_limit="${radians(-45)}"
+		joint0_upper_limit="${radians(45)}"
+		joint1_lower_limit="${radians(-90)}"
+		joint1_upper_limit="${radians(180)}"
+		joint2_lower_limit="${radians(-160)}"
+		joint2_upper_limit="${radians(20)}"
+		joint3_lower_limit="${radians(-45)}"
+		joint3_upper_limit="${radians(45)}"
+		joint4_lower_limit="${radians(-180)}"
+		joint4_upper_limit="${radians(90)}"
+		joint5_lower_limit="${radians(-160)}"
+		joint5_upper_limit="${radians(20)}"
+		joint6_lower_limit="${radians(-45)}"
+		joint6_upper_limit="${radians(45)}"
+		joint7_lower_limit="${radians(-90)}"
+		joint7_upper_limit="${radians(180)}"
+		joint8_lower_limit="${radians(-160)}"
+		joint8_upper_limit="${radians(20)}"
+		joint9_lower_limit="${radians(-45)}"
+		joint9_upper_limit="${radians(45)}"
+		joint10_lower_limit="${radians(-180)}"
+		joint10_upper_limit="${radians(90)}"
+		joint11_lower_limit="${radians(-160)}"
+		joint11_upper_limit="${radians(20)}"
+		joints_effort_limit="${EFFORT_LIMIT}"
+		joints2_effort_limit="${KNEES_EFFORT_LIMIT}"
+		joints_velocity_limit="${VELOCITY_LIMIT}"
+		joints2_velocity_limit="${KNEES_VELOCITY_LIMIT}"
+		color="white" />
+
+	<!-- 可動範囲や速度など、各部位に必要なパラメーター -->
+
+</robot>
