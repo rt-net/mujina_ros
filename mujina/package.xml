@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>mujina</name>
+  <version>0.0.1</version>
+  <description>ROS 2 package suite of Mujina</description>
+  <maintainer email="support@rt-net.jp">RT Corporation</maintainer>
+  <author email="kawaharazuka@jsk.imi.i.u-tokyo.ac.jp">Kento Kawaharazuka</author>
+  <author>CoRE-MA-KING</author>
+  <author email="yakushigawa@rt-net.jp">chama1176</author>
+  <license>MIT</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <exec_depend>mujina_control</exec_depend>
+  <exec_depend>mujina_description</exec_depend>
+  <exec_depend>mujina_msgs</exec_depend>
+  <exec_depend>rt_usb_imu_driver</exec_depend>
+  <exec_depend>joy</exec_depend>
+  <exec_depend>joy_linux</exec_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

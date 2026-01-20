@@ -1,0 +1,71 @@
+<mujoco model="mujina">
+  <compiler angle="radian"/>
+
+  <worldbody>
+    <body name="base_link" pos="0 0 0.5">
+      <inertial pos="-11.002e-03 5.891e-03 -1.819e-03" mass="4.726259" diaginertia="0.016272346 0.058198068 0.0667135599"/>
+      <joint name="base_joint" type="free" limited="false" actuatorfrclimited="false"/>
+      <geom size="0.1625 0.0915 0.05125" pos="0 0 0" type="box" rgba="0.9 0.9 0.9 1"/>
+      <body name="FL_scapula" pos="0.15675 0.05 0">
+        <inertial pos="0.047243 -0.002208 0.000399" quat="0.504504 0.506174 0.488002 0.501116" mass="0.482508" diaginertia="0.000556483 0.000423489 0.000307655"/>
+        <joint name="FL_collar_joint" pos="0 0 0" axis="1 0 0" range="-0.785398 0.785398" actuatorfrcrange="-12 12" armature="0.02"/>
+        <geom size="0.03925 0.0295" pos="0.05325 0 0" quat="0.707388 0.706825 0 0" type="cylinder" rgba="0.9 0.9 0.9 1"/>
+        <body name="FL_thigh" pos="0.05325 0.018 0">
+          <inertial pos="-0.012014 0.044544 -0.036915" quat="0.779883 0.146372 0.0331461 0.607667" mass="0.990346" diaginertia="0.00518076 0.00483897 0.00103805"/>
+          <joint name="FL_hip_joint" pos="0 0 0" axis="0 1 0" range="-1.5708 3.14159" actuatorfrcrange="-12 12" armature="0.02"/>
+          <body name="FL_calf" pos="0 0.064 -0.2">
+            <inertial pos="0.00183874 0 -0.0877863" quat="0.707095 -0.00484439 -0.00484073 0.707085" mass="0.254095" diaginertia="0.00212502 0.00208722 6.24465e-05"/>
+            <joint name="FL_knee_joint" pos="0 0 0" axis="0 1 0" range="-2.79253 0.349066" actuatorfrcrange="-24 24"/>
+            <geom size="0.011 0.1085" pos="0 0 -0.109" type="cylinder" rgba="0.9 0.9 0.9 1"/>
+            <geom size="0.025 0.008" pos="0 0 -0.2" quat="0.707388 0.706825 0 0" type="cylinder" rgba="0.9 0.9 0.9 1"/>
+          </body>
+        </body>
+      </body>
+      <body name="FR_scapula" pos="0.15675 -0.05 0">
+        <inertial pos="0.047243 0.002208 0.000399" quat="0.501116 0.488002 0.506174 0.504504" mass="0.482508" diaginertia="0.000556483 0.000423489 0.000307656"/>
+        <joint name="FR_collar_joint" pos="0 0 0" axis="1 0 0" range="-0.785398 0.785398" actuatorfrcrange="-12 12" armature="0.02"/>
+        <geom size="0.03925 0.0295" pos="0.05325 0 0" quat="0.707388 0.706825 0 0" type="cylinder" rgba="0.9 0.9 0.9 1"/>
+        <body name="FR_thigh" pos="0.05325 -0.018 0">
+          <inertial pos="-0.012106 -0.044357 -0.036699" quat="0.604614 0.0322611 0.147228 0.782129" mass="0.990345" diaginertia="0.00519837 0.00487183 0.00103706"/>
+          <joint name="FR_hip_joint" pos="0 0 0" axis="0 1 0" range="-3.14159 1.5708" actuatorfrcrange="-12 12" armature="0.02"/>
+          <body name="FR_calf" pos="0 -0.064 -0.2">
+            <inertial pos="0.00183874 0 -0.0877864" quat="0.707096 -0.00484422 -0.00484064 0.707085" mass="0.254095" diaginertia="0.00212503 0.00208723 6.24467e-05"/>
+            <joint name="FR_knee_joint" pos="0 0 0" axis="0 1 0" range="-2.79253 0.349066" actuatorfrcrange="-24 24"/>
+            <geom size="0.011 0.1085" pos="0 0 -0.109" type="cylinder" rgba="0.9 0.9 0.9 1"/>
+            <geom size="0.025 0.008" pos="0 0 -0.2" quat="0.707388 0.706825 0 0" type="cylinder" rgba="0.9 0.9 0.9 1"/>
+          </body>
+        </body>
+      </body>
+      <body name="RL_scapula" pos="-0.15675 0.05 0">
+        <inertial pos="-0.037187 -0.001781 -0.000391" quat="0.508061 0.495728 0.499972 0.496141" mass="0.493371" diaginertia="0.00057148 0.000441231 0.000313163"/>
+        <joint name="RL_collar_joint" pos="0 0 0" axis="1 0 0" range="-0.785398 0.785398" actuatorfrcrange="-12 12" armature="0.02"/>
+        <geom size="0.03925 0.0295" pos="-0.05325 0 0" quat="0.707388 0.706825 0 0" type="cylinder" rgba="0.9 0.9 0.9 1"/>
+        <body name="RL_thigh" pos="-0.05325 0.018 0">
+          <inertial pos="-0.011894 0.045143 -0.036371" quat="0.780827 0.140192 0.0305875 0.608047" mass="0.994692" diaginertia="0.00513381 0.00482469 0.00102538"/>
+          <joint name="RL_hip_joint" pos="0 0 0" axis="0 1 0" range="-1.5708 3.14159" actuatorfrcrange="-12 12" armature="0.02"/>
+          <body name="RL_calf" pos="0 0.064 -0.2">
+            <inertial pos="0.00183702 0 -0.0877873" quat="0.707093 -0.00485201 -0.00484844 0.707088" mass="0.254095" diaginertia="0.00212499 0.00208719 6.24475e-05"/>
+            <joint name="RL_knee_joint" pos="0 0 0" axis="0 1 0" range="-2.79253 0.349066" actuatorfrcrange="-24 24"/>
+            <geom size="0.011 0.1085" pos="0 0 -0.109" type="cylinder" rgba="0.9 0.9 0.9 1"/>
+            <geom size="0.025 0.008" pos="0 0 -0.2" quat="0.707388 0.706825 0 0" type="cylinder" rgba="0.9 0.9 0.9 1"/>
+          </body>
+        </body>
+      </body>
+      <body name="RR_scapula" pos="-0.15675 -0.05 0">
+        <inertial pos="-0.037187 -0.001781 -0.000391" quat="0.508061 0.495728 0.499972 0.496141" mass="0.493371" diaginertia="0.00057148 0.000441231 0.000313163"/>
+        <joint name="RR_collar_joint" pos="0 0 0" axis="1 0 0" range="-0.785398 0.785398" actuatorfrcrange="-12 12" armature="0.02"/>
+        <geom size="0.03925 0.0295" pos="-0.05325 0 0" quat="0.707388 0.706825 0 0" type="cylinder" rgba="0.9 0.9 0.9 1"/>
+        <body name="RR_thigh" pos="-0.05325 -0.018 0">
+          <inertial pos="-0.01182 -0.045143 -0.03621" quat="0.607579 0.0313087 0.139711 0.781248" mass="0.994692" diaginertia="0.00514536 0.00483953 0.00102571"/>
+          <joint name="RR_hip_joint" pos="0 0 0" axis="0 1 0" range="-3.14159 1.5708" actuatorfrcrange="-12 12" armature="0.02"/>
+          <body name="RR_calf" pos="0 -0.064 -0.2">
+            <inertial pos="0.00183702 0 -0.0877873" quat="0.707093 -0.00485201 -0.00484844 0.707088" mass="0.254095" diaginertia="0.00212499 0.00208719 6.24475e-05"/>
+            <joint name="RR_knee_joint" pos="0 0 0" axis="0 1 0" range="-2.79253 0.349066" actuatorfrcrange="-24 24"/>
+            <geom size="0.011 0.1085" pos="0 0 -0.109" type="cylinder" rgba="0.9 0.9 0.9 1"/>
+            <geom size="0.025 0.008" pos="0 0 -0.2" quat="0.707388 0.706825 0 0" type="cylinder" rgba="0.9 0.9 0.9 1"/>
+          </body>
+        </body>
+      </body>
+    </body>
+  </worldbody>
+</mujoco>

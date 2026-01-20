@@ -1,0 +1,235 @@
+# The MIT License (MIT)
+#
+# Copyright (c) 2024 Kento Kawaharazuka
+# Copyright (c) 2025 CoRE-MA-KING
+# Copyright (c) 2026 RT Corporation
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy of
+# this software and associated documentation files (the "Software"), to deal in
+# the Software without restriction, including without limitation the rights to
+# use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+# the Software, and to permit persons to whom the Software is furnished to do so,
+# subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+# FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+# COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+# IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+# CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+import os
+import pprint
+
+import torch
+import urdf_parser_py.urdf as urdf
+from ament_index_python.packages import get_package_share_directory
+
+from .legged_gym_math import wrap_to_pi
+from .legged_gym_math.isaacgym_torch_utils import (
+    get_axis_params,
+    quat_apply,
+    quat_rotate_inverse,
+)
+from .parameters import parameters as P
+
+
+# copied from legged_gym
+class normalization:
+    class obs_scales:
+        lin_vel = 2.0
+        ang_vel = 0.25
+        dof_pos = 1.0
+        dof_vel = 0.05
+        height_measurements = 5.0
+
+    clip_observations = 100.0
+    clip_actions = 100.0
+
+
+def get_urdf_joint_params(urdf_path, joint_names):
+    if isinstance(urdf_path, str) and urdf_path.endswith('.urdf'):
+        robot_urdf = open(urdf_path, 'r', encoding='utf-8').read().encode()
+
+    robot = urdf.Robot.from_xml_string(robot_urdf)
+    # joint_params = {}
+    joint_params = [None] * len(robot.joints)
+
+    for joint in robot.joints:
+        if joint.type == 'revolute' or joint.type == 'continuous':
+            if joint.limit:
+                index = joint_names.index(joint.name)
+                joint_params[index] = (
+                    joint.limit.lower,
+                    joint.limit.upper,
+                    joint.limit.effort,
+                    joint.limit.velocity,
+                )
+
+    return joint_params
+
+
+def test_get_urdf_joint_params():
+    urdf_fullpath = os.path.join(
+        get_package_share_directory('mujina_description'), 'urdf/mujina.urdf'
+    )
+
+    joint_names = [
+        'RL_collar_joint',
+        'RL_hip_joint',
+        'RL_knee_joint',
+        'RR_collar_joint',
+        'RR_hip_joint',
+        'RR_knee_joint',
+        'FL_collar_joint',
+        'FL_hip_joint',
+        'FL_knee_joint',
+        'FR_collar_joint',
+        'FR_hip_joint',
+        'FR_knee_joint',
+    ]
+    pprint.pprint(get_urdf_joint_params(urdf_fullpath, joint_names))
+
+
+def read_torch_policy(policy_path):
+    policy = torch.jit.load(policy_path)
+    policy.eval()
+    return policy
+
+
+def test_read_torch_policy():
+    policy_path = os.path.join(
+        get_package_share_directory('mujina_control'),
+        'models/policy.pt',
+    )
+    policy = read_torch_policy(policy_path)
+    input_data = torch.randn(1, 45)
+
+    with torch.no_grad():
+        output = policy(input_data)
+        print(output.numpy()[0])
+
+
+def get_policy_observation(
+    base_quat_,
+    # base_lin_vel_,
+    base_ang_vel_,
+    command_,
+    dof_pos_,
+    dof_vel_,
+    actions_,
+):
+    obs_scales = normalization.obs_scales
+    default_dof_pos = torch.tensor(P.DEFAULT_ANGLE, dtype=torch.float32)
+
+    forward_vec = torch.tensor(
+        [1.0, 0.0, 0.0], dtype=torch.float, requires_grad=False
+    ).reshape(1, -1)
+    gravity_vec = torch.tensor(
+        get_axis_params(-1.0, 2), dtype=torch.float, requires_grad=False
+    ).reshape(1, -1)
+    base_quat = torch.tensor(
+        base_quat_, dtype=torch.float, requires_grad=False
+    ).reshape(1, -1)
+    # base_lin_vel = torch.tensor(
+    #     base_lin_vel_[:], dtype=torch.float, requires_grad=False
+    # ).reshape(1, -1)
+    base_ang_vel = torch.tensor(
+        base_ang_vel_[:], dtype=torch.float, requires_grad=False
+    ).reshape(1, -1)
+    command = torch.tensor(
+        command_, dtype=torch.float, requires_grad=False
+    ).reshape(1, -1)
+    dof_pos = torch.tensor(
+        dof_pos_, dtype=torch.float, requires_grad=False
+    ).reshape(1, -1)
+    dof_vel = torch.tensor(
+        dof_vel_, dtype=torch.float, requires_grad=False
+    ).reshape(1, -1)
+    actions = torch.tensor(
+        actions_, dtype=torch.float, requires_grad=False
+    ).reshape(1, -1)
+    # command_scale = torch.tensor(
+    #    [obs_scales.lin_vel, obs_scales.lin_vel, obs_scales.ang_vel],
+    #    requires_grad=False,
+    # )
+
+    # base_lin_vel = quat_rotate_inverse(base_quat, base_lin_vel)
+    # base_ang_vel = quat_rotate_inverse(base_quat, base_ang_vel)
+    projected_gravity = quat_rotate_inverse(base_quat, gravity_vec)
+    # print("----------------------------------")
+    # print(base_quat.numpy()[0])
+    # print(base_lin_vel.numpy()[0])
+    # print(base_ang_vel.numpy()[0])
+    # print(projected_gravity.numpy()[0])
+
+    if P.commands.heading_command:
+        forward = quat_apply(base_quat, forward_vec)
+        heading = torch.atan2(forward[:, 1], forward[:, 0])
+        command[:, 2] = torch.clip(
+            0.5 * wrap_to_pi(command[:, 3] - heading), -1.0, 1.0
+        )
+
+    obs = torch.cat(
+        (
+            # base_lin_vel * obs_scales.lin_vel,  # 3D
+            base_ang_vel * obs_scales.ang_vel,  # 3D
+            projected_gravity,  # 3D
+            command[:, :3],  # 3D
+            (dof_pos - default_dof_pos) * obs_scales.dof_pos,  # 12D
+            dof_vel * obs_scales.dof_vel,  # 12D
+            actions,  # 12D
+            # is_standing,
+        ),
+        dim=-1,
+    )
+    return obs
+
+
+def get_policy_output(policy, obs):
+    clip_obs = normalization.clip_observations
+    obs = torch.clip(obs, -clip_obs, clip_obs)
+
+    with torch.no_grad():
+        actions = policy(obs)
+
+    clip_actions = normalization.clip_actions
+    actions = torch.clip(actions, -clip_actions, clip_actions)
+    return actions.numpy()[0]  # reference angle [rad]
+
+
+def test_get_policy_output():
+    policy_path = os.path.join(
+        get_package_share_directory('mujina_control'),
+        'models/policy.pt',
+    )
+    policy = read_torch_policy(policy_path)
+    base_quat = [0.0, 0.0, 0.0, 1.0]
+    base_ang_vel = [0.0, 0.0, 0.0]
+    command = [0.0, 0.0, 0.0, 0.0]
+    dof_pos = P.DEFAULT_ANGLE
+    dof_vel = [0] * 12
+    actions = [0] * 12
+    obs = get_policy_observation(
+        base_quat,
+        # base_lin_vel,
+        base_ang_vel,
+        command,
+        dof_pos,
+        dof_vel,
+        actions,
+    )
+    print(obs.numpy()[0])
+    print(get_policy_output(policy, obs))
+
+
+if __name__ == '__main__':
+    print('# test_get_urdf_joint_params')
+    test_get_urdf_joint_params()
+    print('# test_read_torch_policy')
+    test_read_torch_policy()
+    print('# test_get_policy_output')
+    test_get_policy_output()
