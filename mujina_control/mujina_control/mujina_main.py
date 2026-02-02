@@ -721,7 +721,7 @@ class SimCommunication(BaseNode):
 
         self.mujina_log_pub.publish(msg)
 
-        self.viewer.render()
+        self.viewer.sync()
 
 
 class MainController(Node):
