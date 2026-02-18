@@ -496,6 +496,7 @@ class CanCommunicationNode(BaseNode):
             RobotModeCommand.TRANSITION_TO_STANDBY
         )
         with robot_state.lock:
+            robot_command.angle = robot_state.angle[:]
             robot_command.initial_angle = robot_state.angle[:]
             robot_command.final_angle = P.STANDBY_ANGLE[:]
             robot_command.interpolating_time = (
