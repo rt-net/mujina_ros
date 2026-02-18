@@ -10,6 +10,8 @@
 - Recommended Joystick Controllers
   - [Logicool Wireless Gamepad F710](https://gaming.logicool.co.jp/ja-jp/shop/p/f710-wireless-gamepad.940-000144)
   - [Logicool Wired Gamepad F310](https://gaming.logicool.co.jp/ja-jp/shop/p/f310-gamepad.940-000137)
+- Recommended USB CAN Device
+  - A USB-CAN device that supports [candleLight_fw](https://github.com/rt-net/candleLight_fw) is recommended.
 
 
 ## Build and Install
@@ -47,7 +49,7 @@ Before first use, set the motor origin:
 2. Set the joint origin by running the following commands:
 ```
 cd ~/mujina_ws/src/mujina_ros
-./mujina_control/scripts/can_setup.sh
+./mujina_control/scripts/can_setup_net.sh
 python3 mujina_control/scripts/motor_set_zero_position.py --ids 1
 ```
 
@@ -64,7 +66,7 @@ python3 -m mujina_control.mujina_utils.mujina_utils
 To test the motors, run:
 ```
 cd ~/mujina_ws/src/mujina_ros
-./mujina_control/scripts/can_setup.sh
+./mujina_control/scripts/can_setup_net.sh
 python3 mujina_control/scripts/motor_test_read_only.py --ids 1
 ```
 
@@ -78,7 +80,7 @@ ros2 run rt_usb_imu_driver rt_usb_imu_driver --ros-args -p "port_name:=/dev/rt_u
 ## Terminal 2: 
 source ~/mujina_ws/install/setup.bash
 cd ~/mujina_ws/src/mujina_ros
-./mujina_control/scripts/can_setup.sh
+./mujina_control/scripts/can_setup_net.sh
 ros2 run mujina_control mujina_main
 
 ## Terminal 3: 
@@ -100,6 +102,11 @@ Left and Right Joysticks: Send commands in Walk mode.
 To simulate the robot in Mujoco, run the following command in Terminal 2 instead:
 ```
 ros2 run mujina_control mujina_main --sim
+```
+
+To create a CAN network interface from a serial port, run the following command in Terminal2 instead:
+```
+./mujina_control/scripts/can_setup_serial.sh
 ```
 
 ## Acknowledgements
