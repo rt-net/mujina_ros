@@ -545,8 +545,16 @@ class CanCommunicationNode(BaseNode):
                     '# Can Reciver is Failed for {}, ({})'.format(
                         P.JOINT_NAME[i], self.error_count[i]
                     ),
-                    throttle_duration_sec=1,
                 )
+                # Emergency stop if communication error occurs
+                if self.error_count[i] >= 5:
+                    self.get_logger().warn('Emergency stop triggered')
+                    command_callback(
+                        RobotModeCommand.EMERGENCY_STOP,
+                        self.robot_state,
+                        self.robot_command,
+                    )
+
                 continue
             pos_list[i] = pos
             vel_list[i] = vel

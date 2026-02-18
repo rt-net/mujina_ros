@@ -212,6 +212,7 @@ maxRawKp = 2**12 - 1  # 12-Bits for Raw Kp Values
 maxRawKd = 2**12 - 1  # 12-Bits for Raw Kd Values
 maxRawCurrent = 2**12 - 1  # 12-Bits for Raw Current Values
 dt_sleep = 0.0001  # Time before motor sends a reply
+enable_sleep = 0.002  # Time before motor sends a reply
 set_zero_sleep = (
     1.5  # Time to wait after setting zero. Motor takes extra time to set zero.
 )
@@ -448,7 +449,7 @@ class CanMotorController:
                 res=self.set_zero_position()
                 self._send_can_frame(b'\xff\xff\xff\xff\xff\xff\xff\xfc')
             # 16進数で8バイトのデータを表す.
-            waitOhneSleep(dt_sleep)
+            waitOhneSleep(enable_sleep)
             can_id, can_dlc, motorStatusData = self._recv_can_frame()
             if self.motor_type == 'RobStride02':
                 print('Motor Enabled.')
