@@ -1,2 +1,2 @@
 SUBSYSTEM=="tty", ATTRS{idVendor}=="16d0", ATTRS{idProduct}=="117e", GROUP="dialout", SYMLINK+="usb_can"
-SUBSYSTEM=="tty", ATTRS{idVendor}=="0483", ATTRS{idProduct}=="5740", GROUP="dialout", SYMLINK+="rt_usb_imu"
+SUBSYSTEM=="tty", ATTRS{idVendor}=="2b72", ATTRS{idProduct}=="0014", GROUP="dialout", SYMLINK+="rt_usb_imu"
