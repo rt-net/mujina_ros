@@ -23,6 +23,7 @@
 
 #include "rt_usb_imu_driver/parser.hpp"
 
+#include <cmath>
 #include <cstdint>
 #include <cstring>
 #include <iostream>
@@ -32,7 +33,7 @@
 #include <vector>
 
 namespace rt_usb_imu_data_parser {
-Parser::Parser() { status_.resize(SCALE_NUM_, ScaleStatus::CANNOT_USE); }
+Parser::Parser() {}
 
 void Parser::append_data(const char *s, std::size_t n) {
   serial_data_.append(s, n);
@@ -50,6 +51,7 @@ bool Parser::parse() {
     std::string line = serial_data_.substr(start, end - start);
     std::cout << "Parse line: " << line << std::endl;
     std::vector<double> values;
+    bool has_nonfinite = false;
     size_t pos = 0;
     while (pos < line.size()) {
       size_t comma = line.find(',', pos);
@@ -58,7 +60,12 @@ bool Parser::parse() {
                               : line.substr(pos, comma - pos);
       if (!token.empty()) {
         try {
-          values.push_back(std::stod(token));
+          double value = std::stod(token);
+          if (!std::isfinite(value)) {
+            has_nonfinite = true;
+          } else {
+            values.push_back(value);
+          }
         } catch (...) {
           // ignore parse errors
         }
@@ -67,7 +74,7 @@ bool Parser::parse() {
         break;
       pos = comma + 1;
     }
-    if (values.size() == 8) {
+    if (!has_nonfinite && values.size() == 8) {
       latest_data_ = values;
       update_flag = true;
     } else {

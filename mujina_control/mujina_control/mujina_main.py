@@ -69,7 +69,7 @@ class RobotState:
 class PeripheralState:
     def __init__(self):
         self.sensor_last_received_time = None
-        self.body_quat = [0.0] * 4
+        self.body_quat = [0.0, 0.0, 0.0, 1.0]
         self.body_gyro = [0.0] * 3
         self.body_acc = [0.0] * 3
         self.control_enable = False
@@ -193,21 +193,19 @@ def command_callback(
 def fused_imu_callback(msg: Imu, params: PeripheralState):
     peripheral_state = params
     peripheral_state.sensor_last_received_time = time.time()
+    quat = [
+        msg.orientation.x,
+        msg.orientation.y,
+        msg.orientation.z,
+        msg.orientation.w,
+    ]
     with peripheral_state.lock:
-        peripheral_state.body_quat = [
-            msg.orientation.x,
-            msg.orientation.y,
-            msg.orientation.z,
-            msg.orientation.w,
-        ]
+        peripheral_state.body_quat = quat
         peripheral_state.body_gyro = [
             msg.angular_velocity.x,
             msg.angular_velocity.y,
             msg.angular_velocity.z,
         ]
-        #peripheral_state.body_gyro = [
-        #    0.0,0.0,0.0
-        #]
         peripheral_state.body_acc = [
             msg.linear_acceleration.x,
             msg.linear_acceleration.y,
@@ -860,14 +858,19 @@ class MainController(Node):
                     self.is_safe = False
 
             # falling down
-            if self.is_safe and (
-                Rotation.from_quat(base_quat).as_matrix()[2, 2] < 0.6
-            ):
+            try:
+                rot_mat = Rotation.from_quat(base_quat).as_matrix()
+            except Exception as exc:
+                self.get_logger().error(
+                    'Exception in fall check: {} quat={}'.format(
+                        exc, base_quat
+                    )
+                )
+                return
+            if self.is_safe and (rot_mat[2, 2] < 0.6):
                 self.is_safe = False
                 self.get_logger().warn('Robot is almost fell down.')
-                self.get_logger().warn(
-                    '{}'.format(Rotation.from_quat(base_quat).as_matrix())
-                )
+                self.get_logger().warn('{}'.format(rot_mat))
 
             # self.is_safe=True
             if not self.is_safe:
