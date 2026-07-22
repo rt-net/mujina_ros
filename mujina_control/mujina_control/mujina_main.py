@@ -24,6 +24,8 @@
 # mypy: disable-error-code=attr-defined
 import argparse
 import os
+from pathlib import Path
+import subprocess
 import sys
 import threading
 import time
@@ -53,6 +55,9 @@ from mujina_msgs.msg._motor_log import MotorLog
 from .mujina_utils import mujina_utils
 from .mujina_utils.parameters import parameters as P
 # from .tmotor_lib.tmotor_lib import CanMotorController
+
+
+KNEE_MOTOR_IDS = [3, 6, 9, 12]
 
 
 # Current status of robot(motor)
@@ -228,6 +233,8 @@ class BaseNode(Node):
         self.robot_state = robot_state
         self.robot_command = robot_command
         self.peripheral_state = peripheral_state
+        self.knee_zero_in_progress = False
+        self.previous_four_button = 0
 
         with self.robot_state.lock:
             self.robot_state.angle = [float(x) for x in P.STANDBY_ANGLE]
@@ -353,9 +360,15 @@ class BaseNode(Node):
             one_pushed = msg.buttons[0]
             two_pushed = msg.buttons[1]
             three_pushed = msg.buttons[2]
+            four_pushed = msg.buttons[3]
+            four_just_pushed = four_pushed == 1 and self.previous_four_button == 0
+            self.previous_four_button = four_pushed
 
         with robot_command.lock:
             robot_mode = robot_command.robot_mode
+        if four_just_pushed and robot_mode == RobotModeCommand.EMERGENCY_STOP:
+            self.start_knee_zero_position_sequence()
+            return
         if three_pushed == 1:
             if robot_mode != RobotModeCommand.EMERGENCY_STOP:
                 self.get_logger().info('Emergency Stop!')
@@ -391,6 +404,11 @@ class BaseNode(Node):
                     RobotModeCommand.STANDUP, self.robot_state, robot_command
                 )
                 return
+
+    def start_knee_zero_position_sequence(self):
+        self.get_logger().warn(
+            'Knee zero maintenance is available only on the real CAN node.'
+        )
 
     def mode_transition_command_callback(
         self, msg: RobotMode, params: Tuple[RobotState, RobotCommand]
@@ -511,7 +529,71 @@ class CanCommunicationNode(BaseNode):
 
         self.timer = self.create_timer(1 / P.CAN_HZ, self.timer_callback)
 
+    def start_knee_zero_position_sequence(self):
+        if self.knee_zero_in_progress:
+            self.get_logger().warn('Knee zero position is already running.')
+            return
+
+        self.knee_zero_in_progress = True
+        self.run_knee_zero_position_sequence()
+
+    def run_knee_zero_position_sequence(self):
+        script_path = (
+            Path(get_package_share_directory('mujina_control'))
+            / 'scripts'
+            / 'motor_set_zero_position.py'
+        )
+        command = [
+            sys.executable,
+            str(script_path),
+            '--device',
+            self.device,
+            '--ids',
+            *[str(motor_id) for motor_id in KNEE_MOTOR_IDS],
+        ]
+
+        self.get_logger().warn(
+            'Starting knee zero position for motor IDs: {}'.format(
+                KNEE_MOTOR_IDS
+            )
+        )
+        try:
+            subprocess.run(
+                command,
+                check=True,
+                timeout=30,
+            )
+        except subprocess.TimeoutExpired:
+            self.get_logger().error('Knee zero position timed out.')
+            self.knee_zero_in_progress = False
+            return
+        except subprocess.CalledProcessError as exc:
+            self.get_logger().error(
+                'Knee zero position failed: {}'.format(exc)
+            )
+            self.knee_zero_in_progress = False
+            return
+        except Exception as exc:
+            self.get_logger().error(
+                'Knee zero position failed: {}'.format(exc)
+            )
+            self.knee_zero_in_progress = False
+            return
+
+        self.get_logger().warn(
+            'Knee zero position completed. Do not move the robot until power '
+            'is off.'
+        )
+        self.power_off()
+
+    def power_off(self):
+        self.get_logger().warn('Powering off the internal PC.')
+        subprocess.run(['sudo', '-n', 'shutdown', 'now'], check=True, timeout=10)
+
     def timer_callback(self):
+        if self.knee_zero_in_progress:
+            return
+
         msg = MotorLog()
         msg.header.stamp = Time()
         jointstate_msg = JointState()
@@ -960,7 +1042,9 @@ def main():
             )
         else:
             communication_thread = CanCommunicationNode(
-                robot_state, robot_command, peripheral_state
+                robot_state,
+                robot_command,
+                peripheral_state,
             )
 
         executor = SingleThreadedExecutor()
