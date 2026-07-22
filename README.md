@@ -86,6 +86,16 @@ ros2 run mujina_control mujina_main
 ## Terminal 3: 
 source ~/mujina_ws/install/setup.bash
 ros2 run joy_linux joy_linux_node
+
+## Terminal 4:
+source ~/mujina_ws/install/setup.bash
+ros2 run mujina_control serial_state_bridge
+```
+
+The default RP2040 serial port is `/dev/ttyACM0`. To use another port:
+```
+ros2 run mujina_control serial_state_bridge \
+  --ros-args -p serial_port:=/dev/ttyACM1
 ```
 
 For the recommended gamepad:  

@@ -28,9 +28,12 @@ class RobotModeCommand(StrEnum):
     STANDBY = 'standby'
     STANDUP = 'standup'
     WALK = 'walk'
+
+    CALIBRATING = 'calibrating'
     DEBUG = 'debug'
 
     EMERGENCY_STOP = 'emergency_stop'
+    ERROR = 'error'
 
     TRANSITION_TO_STANDBY = 'transition_to_standby'
     TRANSITION_TO_STANDUP = 'transition_to_standup'

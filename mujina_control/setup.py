@@ -31,6 +31,7 @@ setup(
     entry_points={
         'console_scripts': [
             'mujina_main = mujina_control.mujina_main:main',
+            'serial_state_bridge = mujina_control.serial_state_bridge:main',
         ],
     },
 )
