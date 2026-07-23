@@ -473,12 +473,14 @@ class CanCommunicationNode(BaseNode):
 
         self.get_logger().info('Init can node')
 
-        self.device = 'can0'
         self.motor_type = 'RobStride02'
         self.n_motor = 12
+        self.motor_devices = [
+            mujina_utils.get_can_device(motor_id) for motor_id in P.CAN_ID
+        ]
         self.motors = [
             CanMotorController(
-                self.device,
+                self.motor_devices[i],
                 P.CAN_ID[i],
                 motor_type=self.motor_type,
                 motor_dir=P.MOTOR_DIR[i],
@@ -543,14 +545,10 @@ class CanCommunicationNode(BaseNode):
             / 'scripts'
             / 'motor_set_zero_position.py'
         )
-        command = [
-            sys.executable,
-            str(script_path),
-            '--device',
-            self.device,
-            '--ids',
-            *[str(motor_id) for motor_id in KNEE_MOTOR_IDS],
-        ]
+        motor_ids_by_device = {}
+        for motor_id in KNEE_MOTOR_IDS:
+            device = mujina_utils.get_can_device(motor_id)
+            motor_ids_by_device.setdefault(device, []).append(motor_id)
 
         self.get_logger().warn(
             'Starting knee zero position for motor IDs: {}'.format(
@@ -558,11 +556,20 @@ class CanCommunicationNode(BaseNode):
             )
         )
         try:
-            subprocess.run(
-                command,
-                check=True,
-                timeout=30,
-            )
+            for device, motor_ids in motor_ids_by_device.items():
+                command = [
+                    sys.executable,
+                    str(script_path),
+                    '--device',
+                    device,
+                    '--ids',
+                    *[str(motor_id) for motor_id in motor_ids],
+                ]
+                subprocess.run(
+                    command,
+                    check=True,
+                    timeout=30,
+                )
         except subprocess.TimeoutExpired:
             self.get_logger().error('Knee zero position timed out.')
             self.knee_zero_in_progress = False
