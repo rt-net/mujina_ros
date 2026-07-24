@@ -283,8 +283,7 @@ class CanMotorController:
     Uses SocketCAN driver for communication.
     """
 
-    can_socket_declared = False
-    motor_socket = None
+    motor_sockets = {}
     angle_range = None  # [rad]
     angle_offset = None  # [rad]
     current_pos = 0  # [rad]
@@ -336,29 +335,29 @@ class CanMotorController:
 
         self.motor_type = motor_type
 
-        can_socket = (can_socket,)
         self.motor_id = motor_id
-        if not CanMotorController.can_socket_declared:
+        if can_socket not in CanMotorController.motor_sockets:
             # create a raw socket and bind it to the given CAN interface
             try:
-                CanMotorController.motor_socket = socket.socket(
+                motor_socket = socket.socket(
                     socket.AF_CAN, socket.SOCK_RAW, socket.CAN_RAW
                 )
-                CanMotorController.motor_socket.setsockopt(
+                motor_socket.setsockopt(
                     socket.SOL_CAN_RAW, socket.CAN_RAW_LOOPBACK, 0
                 )
-                CanMotorController.motor_socket.bind(can_socket)
-                CanMotorController.motor_socket.settimeout(socket_timeout)
+                motor_socket.bind((can_socket,))
+                motor_socket.settimeout(socket_timeout)
+                CanMotorController.motor_sockets[can_socket] = motor_socket
                 print('Bound to: ', can_socket)
-                CanMotorController.can_socket_declared = True
             except Exception as e:
                 print('Unable to Connect to Socket Specified: ', can_socket)
                 print('Error:', e)
-        elif CanMotorController.can_socket_declared:
+        else:
             print(
                 'Socket already available. Using:  ',
-                CanMotorController.motor_socket,
+                CanMotorController.motor_sockets[can_socket],
             )
+        self.motor_socket = CanMotorController.motor_sockets.get(can_socket)
         # Initialize the command BitArrays for performance optimization
         self._p_des_BitArray = BitArray(
             uint=float_to_uint(
@@ -407,7 +406,7 @@ class CanMotorController:
             can_msg = struct.pack(can_frame_fmt_send, self.motor_id, can_dlc, data)
         try:
             #print(can_msg)
-            CanMotorController.motor_socket.send(can_msg)
+            self.motor_socket.send(can_msg)
         except Exception as e:
             print('Unable to Send CAN Frame.')
             print('Error: ', e)
@@ -419,7 +418,7 @@ class CanMotorController:
         Returns can_id, can_dlc (data length), data (in bytes).
         """
         try:
-            frame, addr = CanMotorController.motor_socket.recvfrom(recvBytes)
+            frame, addr = self.motor_socket.recvfrom(recvBytes)
             can_id, can_dlc, data = struct.unpack(can_frame_fmt_recv, frame)
 
             if can_id & CAN_EFF_FLAG:

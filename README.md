@@ -49,7 +49,7 @@ Before first use, set the motor origin:
 2. Set the joint origin by running the following commands:
 ```
 cd ~/mujina_ws/src/mujina_ros
-./mujina_control/scripts/can_setup_net.sh
+./mujina_control/scripts/can_setup_net_can0.sh
 python3 mujina_control/scripts/motor_set_zero_position.py --ids 1
 ```
 
@@ -66,7 +66,7 @@ python3 -m mujina_control.mujina_utils.mujina_utils
 To test the motors, run:
 ```
 cd ~/mujina_ws/src/mujina_ros
-./mujina_control/scripts/can_setup_net.sh
+./mujina_control/scripts/can_setup_net_can0.sh
 python3 mujina_control/scripts/motor_test_read_only.py --ids 1
 ```
 
@@ -80,7 +80,8 @@ ros2 run rt_usb_imu_driver rt_usb_imu_driver --ros-args -p "port_name:=/dev/rt_u
 ## Terminal 2: 
 source ~/mujina_ws/install/setup.bash
 cd ~/mujina_ws/src/mujina_ros
-./mujina_control/scripts/can_setup_net.sh
+./mujina_control/scripts/can_setup_net_can0.sh
+./mujina_control/scripts/can_setup_net_can1.sh
 ros2 run mujina_control mujina_main
 
 ## Terminal 3: 

@@ -25,23 +25,32 @@ import argparse
 import time
 
 from mujina_control.motor_lib.motor_lib import CanMotorController
+from mujina_control.mujina_utils import mujina_utils
 from mujina_control.mujina_utils.parameters import parameters as P
 
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        '--device', '-d', type=str, default='can0', help='can interface name'
+        '--device',
+        '-d',
+        type=str,
+        default=None,
+        help='can interface name (overrides motor-id mapping)',
     )
     args = parser.parse_args()
 
-    print('# using Socket {} for can communication'.format(args.device))
-
     motor_type = 'RobStride02'
     n_motor = 12
+    motor_devices = [
+        args.device or mujina_utils.get_can_device(P.CAN_ID[i])
+        for i in range(n_motor)
+    ]
+    print('# using CAN devices: {}'.format(dict(zip(P.CAN_ID, motor_devices))))
+
     motors = [
         CanMotorController(
-            args.device,
+            motor_devices[i],
             P.CAN_ID[i],
             motor_type=motor_type,
             motor_dir=P.MOTOR_DIR[i],

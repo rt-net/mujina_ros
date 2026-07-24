@@ -37,6 +37,14 @@ from .legged_gym_math.isaacgym_torch_utils import (
 from .parameters import parameters as P
 
 
+def get_can_device(motor_id):
+    if 1 <= motor_id <= 6:
+        return 'can0'
+    if 7 <= motor_id <= 12:
+        return 'can1'
+    raise ValueError('Unsupported motor id: {}'.format(motor_id))
+
+
 # copied from legged_gym
 class normalization:
     class obs_scales:
