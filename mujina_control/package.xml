@@ -13,6 +13,7 @@
   <exec_depend>rclpy</exec_depend>
   <exec_depend>std_msgs</exec_depend>
   <exec_depend>can-utils</exec_depend>
+  <exec_depend>python3-serial</exec_depend>
 
   <depend>mujina_msgs</depend>
   <depend>mujina_description</depend>

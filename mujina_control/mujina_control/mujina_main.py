@@ -41,7 +41,7 @@ from ament_index_python.packages import get_package_share_directory
 from builtin_interfaces.msg import Time
 from geometry_msgs.msg import Twist
 from rclpy.callback_groups import MutuallyExclusiveCallbackGroup
-from rclpy.executors import SingleThreadedExecutor
+from rclpy.executors import MultiThreadedExecutor
 from rclpy.node import Node
 from rclpy.qos import QoSProfile, ReliabilityPolicy
 from scipy.spatial.transform import Rotation
@@ -535,6 +535,9 @@ class CanCommunicationNode(BaseNode):
             return
 
         self.knee_zero_in_progress = True
+        with self.robot_command.lock:
+            self.robot_command.robot_mode = RobotModeCommand.CALIBRATING
+        self.pub_robot_mode_timer_cb()
         self.run_knee_zero_position_sequence()
 
     def run_knee_zero_position_sequence(self):
@@ -565,18 +568,24 @@ class CanCommunicationNode(BaseNode):
             )
         except subprocess.TimeoutExpired:
             self.get_logger().error('Knee zero position timed out.')
+            with self.robot_command.lock:
+                self.robot_command.robot_mode = RobotModeCommand.EMERGENCY_STOP
             self.knee_zero_in_progress = False
             return
         except subprocess.CalledProcessError as exc:
             self.get_logger().error(
                 'Knee zero position failed: {}'.format(exc)
             )
+            with self.robot_command.lock:
+                self.robot_command.robot_mode = RobotModeCommand.EMERGENCY_STOP
             self.knee_zero_in_progress = False
             return
         except Exception as exc:
             self.get_logger().error(
                 'Knee zero position failed: {}'.format(exc)
             )
+            with self.robot_command.lock:
+                self.robot_command.robot_mode = RobotModeCommand.EMERGENCY_STOP
             self.knee_zero_in_progress = False
             return
 
@@ -1047,7 +1056,7 @@ def main():
                 peripheral_state,
             )
 
-        executor = SingleThreadedExecutor()
+        executor = MultiThreadedExecutor(num_threads=2)
         executor.add_node(communication_thread)
         executor.add_node(main_controller)
         try:
