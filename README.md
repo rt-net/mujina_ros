@@ -52,6 +52,9 @@ cd ~/mujina_ws/src/mujina_ros
 ./mujina_control/scripts/can_setup_net_can0.sh
 python3 mujina_control/scripts/motor_set_zero_position.py --ids 1
 ```
+The front-leg motors (IDs 1 to 6) are connected to `can0`, and the rear-leg motors (IDs 7 to 12) to `can1`.
+The `--ids` option accepts multiple IDs, but each run uses a single CAN interface (default: `can0`).
+To set the origin of the rear-leg motors, run `can_setup_net_can1.sh` and add `--device can1`.
 
 ![](./media/robot-pose-to-calib-motor-origin.jpg)
 
@@ -69,6 +72,18 @@ cd ~/mujina_ws/src/mujina_ros
 ./mujina_control/scripts/can_setup_net_can0.sh
 python3 mujina_control/scripts/motor_test_read_only.py --ids 1
 ```
+
+`motor_test_read_only.py`, `motor_test_enable.py`, and `motor_set_zero_position.py` communicate via the `can0` interface by default.
+To use another CAN interface, specify it with the `--device` option.
+For example, to test motor 7, which is connected to `can1`, run:
+```
+cd ~/mujina_ws/src/mujina_ros
+./mujina_control/scripts/can_setup_net_can1.sh
+python3 mujina_control/scripts/motor_test_read_only.py --device can1 --ids 7
+```
+
+To test all motors at once, use `motor_test_mujina_read_only.py`.
+It selects the CAN interface automatically for each motor (IDs 1 to 6: `can0`, IDs 7 to 12: `can1`), so bring up both interfaces first and run it without the `--device` option.
 
 To test the real robot, run the following commands:
 ```
