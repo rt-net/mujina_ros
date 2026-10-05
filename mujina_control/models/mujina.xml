@@ -27,7 +27,7 @@
         <geom size="0.03925 0.0295" pos="0.05325 0 0" quat="0.707388 0.706825 0 0" type="cylinder" rgba="0.9 0.9 0.9 1"/>
         <body name="FR_thigh" pos="0.05325 -0.018 0">
           <inertial pos="-0.012106 -0.044357 -0.036699" quat="0.604614 0.0322611 0.147228 0.782129" mass="0.990345" diaginertia="0.00519837 0.00487183 0.00103706"/>
-          <joint name="FR_hip_joint" pos="0 0 0" axis="0 1 0" range="-3.14159 1.5708" actuatorfrcrange="-12 12" armature="0.02"/>
+          <joint name="FR_hip_joint" pos="0 0 0" axis="0 1 0" range="-1.5708 3.14159" actuatorfrcrange="-12 12" armature="0.02"/>
           <body name="FR_calf" pos="0 -0.064 -0.2">
             <inertial pos="0.00183874 0 -0.0877864" quat="0.707096 -0.00484422 -0.00484064 0.707085" mass="0.254095" diaginertia="0.00212503 0.00208723 6.24467e-05"/>
             <joint name="FR_knee_joint" pos="0 0 0" axis="0 1 0" range="-2.79253 0.349066" actuatorfrcrange="-24 24"/>
@@ -57,7 +57,7 @@
         <geom size="0.03925 0.0295" pos="-0.05325 0 0" quat="0.707388 0.706825 0 0" type="cylinder" rgba="0.9 0.9 0.9 1"/>
         <body name="RR_thigh" pos="-0.05325 -0.018 0">
           <inertial pos="-0.01182 -0.045143 -0.03621" quat="0.607579 0.0313087 0.139711 0.781248" mass="0.994692" diaginertia="0.00514536 0.00483953 0.00102571"/>
-          <joint name="RR_hip_joint" pos="0 0 0" axis="0 1 0" range="-3.14159 1.5708" actuatorfrcrange="-12 12" armature="0.02"/>
+          <joint name="RR_hip_joint" pos="0 0 0" axis="0 1 0" range="-1.5708 3.14159" actuatorfrcrange="-12 12" armature="0.02"/>
           <body name="RR_calf" pos="0 -0.064 -0.2">
             <inertial pos="0.00183702 0 -0.0877873" quat="0.707093 -0.00485201 -0.00484844 0.707088" mass="0.254095" diaginertia="0.00212499 0.00208719 6.24475e-05"/>
             <joint name="RR_knee_joint" pos="0 0 0" axis="0 1 0" range="-2.79253 0.349066" actuatorfrcrange="-24 24"/>
