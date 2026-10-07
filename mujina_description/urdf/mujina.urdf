@@ -226,7 +226,7 @@
     <parent link="FR_scapula"/>
     <child link="FR_thigh"/>
     <origin rpy="0 0 0" xyz="0.05325 -0.018 0"/>
-    <limit effort="12.0" lower="-3.141592653589793" upper="1.5707963267948966" velocity="37.699"/>
+    <limit effort="12.0" lower="-1.5707963267948966" upper="3.141592653589793" velocity="37.699"/>
   </joint>
   <joint name="FR_knee_joint" type="revolute">
     <axis xyz="0 1 0"/>
@@ -422,7 +422,7 @@
     <parent link="RR_scapula"/>
     <child link="RR_thigh"/>
     <origin rpy="0 0 0" xyz="-0.05325 -0.018 0"/>
-    <limit effort="12.0" lower="-3.141592653589793" upper="1.5707963267948966" velocity="37.699"/>
+    <limit effort="12.0" lower="-1.5707963267948966" upper="3.141592653589793" velocity="37.699"/>
   </joint>
   <joint name="RR_knee_joint" type="revolute">
     <axis xyz="0 1 0"/>
